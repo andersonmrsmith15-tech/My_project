@@ -1,0 +1,27 @@
+# Ежедневный сбор объявлений с OLX.uz и Uybor.uz.
+# Результат загружается в Vercel Blob — сайт на Vercel подхватывает его без передеплоя.
+name: Сбор объявлений
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # каждый день в 03:00 по Ташкенту
+  workflow_dispatch:        # ручной запуск (в т.ч. кнопкой «Обновить» на сайте)
+
+concurrency:
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run collect
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}

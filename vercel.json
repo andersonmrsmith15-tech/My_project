@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
+  "functions": {
+    "api/search.js": { "memory": 2048, "maxDuration": 30, "includeFiles": "data/**" },
+    "api/listing.js": { "memory": 2048, "maxDuration": 30, "includeFiles": "data/**" },
+    "api/refresh.js": { "memory": 2048, "maxDuration": 30, "includeFiles": "data/**" },
+    "api/assess.js": { "memory": 2048, "maxDuration": 300, "includeFiles": "data/**" }
+  }
+}
