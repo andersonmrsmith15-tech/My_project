@@ -1,11 +1,28 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
   "outputDirectory": "public",
   "functions": {
-    "api/search.js": { "maxDuration": 60, "includeFiles": "data/**" },
-    "api/listing.js": { "maxDuration": 60, "includeFiles": "data/**" },
-    "api/refresh.js": { "maxDuration": 60, "includeFiles": "data/**" },
-    "api/health.js": { "maxDuration": 60, "includeFiles": "data/**" },
-    "api/assess.js": { "maxDuration": 300, "includeFiles": "data/**" }
+    "api/search.js": {
+      "maxDuration": 60,
+      "includeFiles": "./data/**"
+    },
+    "api/listing.js": {
+      "maxDuration": 60,
+      "includeFiles": "./data/**"
+    },
+    "api/refresh.js": {
+      "maxDuration": 60,
+      "includeFiles": "./data/**"
+    },
+    "api/health.js": {
+      "maxDuration": 60,
+      "includeFiles": "./data/**"
+    },
+    "api/assess.js": {
+      "maxDuration": 300,
+      "includeFiles": "./data/**"
+    }
   }
 }
