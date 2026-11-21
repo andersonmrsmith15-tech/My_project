@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "collect": "node scraper/collect.mjs",
-    "start": "node server.mjs"
+    "start": "node scripts/dev-server.mjs"
   },
   "engines": {
     "node": "22.x"

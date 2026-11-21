@@ -1,15 +1,16 @@
 // Локальный сервер для разработки: тот же сайт и те же API-функции, что и на Vercel.
 // Запуск: npm start  →  http://localhost:3000
-// На Vercel этот файл не используется.
+// На Vercel этот файл НЕ используется (и исключён в .vercelignore): там работают функции из папки api/.
+// Не переносите его в корень проекта — Vercel примет его за сервер всего сайта.
 
 import http from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resetCache, json } from './lib/data.js';
+import { resetCache, json } from '../lib/data.js';
 
-const ROOT = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = path.join(ROOT, 'public');
 const PORT = Number(process.env.PORT) || 3000;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon' };
@@ -44,13 +45,13 @@ http.createServer(async (req, res) => {
   try {
     if (url.pathname === '/api/refresh' && !process.env.GITHUB_TOKEN) {
       if (req.method === 'POST') runCollector();
-      const { getData } = await import('./lib/data.js');
+      const { getData } = await import('../lib/data.js');
       const { data } = await getData();
       return sendResponse(res, json({ configured: true, local: true, collectedAt: data.collectedAt, running: local.running, ok: local.ok, log: local.ok === false ? local.log : undefined }, { status: req.method === 'POST' ? 202 : 200 }));
     }
     const m = url.pathname.match(/^\/api\/([a-z-]+)$/);
     if (m) {
-      const mod = await import(`./api/${m[1]}.js`).catch(() => null);
+      const mod = await import(`../api/${m[1]}.js`).catch(() => null);
       const handler = mod?.[req.method];
       if (!handler) return sendResponse(res, json({ error: 'Not found' }, { status: 404 }));
       return sendResponse(res, await handler(await toRequest(req)));

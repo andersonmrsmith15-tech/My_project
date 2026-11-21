@@ -5,7 +5,7 @@ import { parseQuery, filterListings, sortListings, toCard } from '../lib/filter.
 
 export async function GET(request) {
   const sp = new URL(request.url).searchParams;
-  const { data, facets } = await getData();
+  const { data, facets, empty } = await getData();
   const q = parseQuery(sp);
   const list = sortListings(filterListings(data.listings, q), q.sort);
   const offset = Math.max(0, parseInt(sp.get('offset') || '0', 10) || 0);
@@ -20,5 +20,6 @@ export async function GET(request) {
     body.points = list.filter((l) => l.lat && l.lng).slice(0, 4000)
       .map((l) => [l.id, +l.lat.toFixed(5), +l.lng.toFixed(5), l.priceUsd, l.type, l.rooms, l.area]);
   }
-  return json(body, { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600' } });
+  if (empty) body.error = 'Данные объявлений не загрузились на сервере. Подробности: /api/health';
+  return json(body, { headers: { 'Cache-Control': empty ? 'no-store' : 'public, s-maxage=300, stale-while-revalidate=600' } });
 }
